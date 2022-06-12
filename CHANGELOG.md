@@ -2,10 +2,13 @@
 All notable changes to this project will be documented in this file. This change log follows the conventions of [keepachangelog.com](http://keepachangelog.com/).
 
 ## [Unreleased]
-### Changed
-- Add a new arity to `make-widget-async` to provide a different widget shape.
 
-## [0.1.1] - 2022-06-11
+### TODO
+- Make the program accept a file via command line interface and read from it.
+- Set a variable to be modified at runtime.
+- Execute the transaction to the data
+- Write data to the same file
+
 ### Changed
 - Documentation on how to make the widgets.
 
@@ -15,10 +18,4 @@ All notable changes to this project will be documented in this file. This change
 ### Fixed
 - Fixed widget maker to keep working when daylight savings switches over.
 
-## 0.1.0 - 2022-06-11
 ### Added
-- Files from the new template.
-- Widget maker public API - `make-widget-sync`.
-
-[Unreleased]: https://sourcehost.site/your-name/vending-machine-business/compare/0.1.1...HEAD
-[0.1.1]: https://sourcehost.site/your-name/vending-machine-business/compare/0.1.0...0.1.1
