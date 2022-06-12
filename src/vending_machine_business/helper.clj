@@ -1,80 +1,30 @@
-(ns vending-machine-business.helper
-  (:require [clojure.tools.cli :refer [parse-opts]]
-            [clojure.string :as string])
-)
+; (ns vending-machine-business.helper
+;   (:require [clojure.tools.cli :refer [parse-opts]]
+;             [clojure.string :as string])
+; )
 
-(def cli-options
-  [
-    ;; First three strings describe a short-option, long-option with optional
-    ;; example argument description, and a description. All three are optional
-    ;; and positional.
-   ["-f" "--file NAME" "File names to read"
-    :multi false ; use :update-fn to combine multiple instance of -f/--file
-    :default []
-    ;; with :multi true, the :update-fn is passed both the existing parsed
-    ;; value(s) and the new parsed value from each option
-    :update-fn conj]
+; (def cli-options
+;   [
+;    ["-f" "--file NAME" "File names to read"
+;     :multi false ; use :update-fn to combine multiple instance of -f/--file
+;     :default []
+;     :update-fn conj]
+;    ["-h" "--help"]
+;   ]
+; )
 
-   ;; A boolean option that can explicitly be set to false
-   ; ["-d" "--[no-]daemon" "Daemonize the process" :default true]
-
-   ["-h" "--help"]
-  ]
-)
-
-(defn usage [options-summary]
-  (->> ["Simulation of multiple vending machines' transactions concurrently."
-        ""
-        "Usage: vending-business [options] action"
-        ""
-        "Options:"
-        options-summary
-        ""
-        "Please refer to the manual page for more information."]
-       (string/join \newline)
-  )
-)
-
-
-(defn error-msg [errors]
-  (str "The following errors occurred while parsing your command:\n\n"
-       (string/join \newline errors)
-  )
-)
-
-(defn validate-args
-  "Validate command line arguments. Either return a map indicating the program
-  should exit (with an error message, and optional ok status), or a map
-  indicating the action the program should take and the options provided."
-
-  [args]
-
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
-    (cond
-      (:help options) ; help => exit OK with usage summary
-
-      {:exit-message (usage summary) :ok? true}
-      errors ; errors => exit with description of errors
-
-      {:exit-message (error-msg errors)}
-
-      ;; custom validation on arguments
-      (and (= 1 (count arguments))
-           (#{"start" "stop" "status"} (first arguments))
-      )
-
-      {:action (first arguments) :options options}
-
-      :else ; failed custom validation => exit with usage summary
-
-      {:exit-message (usage summary)})
-  )
-)
-
-(defn exit [status msg]
-  (println msg)
-  (System/exit status)
-)
+; (defn usage [options-summary]
+;   (->> ["Simulation of multiple vending machines' transactions concurrently."
+;         ""
+;         "Usage: vending-business [options] action"
+;         ""
+;         "Options:"
+;         options-summary
+;         ""
+;         "Please refer to the manual page for more information."]
+;        (string/join \newline)
+;   )
+; )
 
 
 ;(def coin-won
