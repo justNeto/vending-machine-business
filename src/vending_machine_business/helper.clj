@@ -1,48 +1,49 @@
-; (ns vending-machine-business.helper
-;   (:require [clojure.tools.cli :refer [parse-opts]]
-;             [clojure.string :as string])
-; )
+(ns vending-machine-business.helper)
 
-; (def cli-options
-;   [
-;    ["-f" "--file NAME" "File names to read"
-;     :multi false ; use :update-fn to combine multiple instance of -f/--file
-;     :default []
-;     :update-fn conj]
-;    ["-h" "--help"]
-;   ]
-; )
+(defn usage []
+  (println "Usage: vending-business [OPTIONS] ... [FILE] ...")
+  (println)
+  (println "Simulation of several vending machines. To run, pass a file with the vending machines.")
+  (println "The format for the file will be ((nombre-maquina(('nombre-producto' precio cantidad) ...)((valor disponibilidad) ... )('nombre-producto' (moneda moneda moneda))...) ... )")
+  (println)
+  (println "Options")
+  (println "-f, --file FILE                 specify file with database.")
+  (println "-s, --simulation                will run a simulation with default data and will save it in db/ project folder.")
+  (println "-m, --machine MACHINE           will select a machine to work with individually. ")
+  (println "-t, --transaction TRANSACTION   will use a transaction file with format transaction::- (('nombre producto' (moneda ...)) ...) ")
 
-; (defn usage [options-summary]
-;   (->> ["Simulation of multiple vending machines' transactions concurrently."
-;         ""
-;         "Usage: vending-business [options] action"
-;         ""
-;         "Options:"
-;         options-summary
-;         ""
-;         "Please refer to the manual page for more information."]
-;        (string/join \newline)
-;   )
-; )
+  (println)
+  (println "-h, --help                      shows this help menu and exit.")
+  (println "-v, --version                   displays current version of script.\n")
+)
 
+(def default-machine
+  '(
+    ("first-machine" (("coca" 15 10)("agua" 15 12)("manzanita" 7 10)) ("a") ("a") )
+    ("second-machine" (("gansito" 18 6) ("pinguinos" 15 17) ("coca" 20 20)) ("b") ("b") )
+    ("third-machine" (("manzanita" 20 20) ("agua" 15 20) ("chocoroles" 18 20)) ("c") ("c") )
+    ("fourth-machine" (("fresca" 18 17) ("fritos" 15 17) ("ruffles" 15 20)) ("d") ("d") )
+    ("fifth-machine" (("coca" 15 10)("fresca" 18 5)("manzanita" 10 23)) ("e") ("e") )
+    ("sixth-machine" (("coca" 15 15) ("pinguinos" 15 7) ("ruffles" 15 14)) ("f") ("f") )
+  )
+)
 
-;(def coin-won
-;  '((50 0)(20 0)(10 0)(5 0)(2 0)(1 0))
-;)
+(def coin-won
+  '((50 0)(20 0)(10 0)(5 0)(2 0)(1 0))
+)
 
-;(def max-deposit ;; max amount of space for a coin of any denomination
-;  50
-;)
+(def max-deposit ;; max amount of space for a coin of any denomination
+  50
+)
 
 ;;;
 ;;; helper.rkt defines the initial data for the simulation of the machine and helper functions to be used through the rest of the program
 ;;;
 
 
-;(defn update-coin-won [index value]
+(defn update-coin-won [index value]
 ;  ; (set! coin-won (reconstruct-deposit coin-won index value))
-;)
+)
 
 ;(defn reset-coin-won
 ;  ; (set! coin-won '((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
