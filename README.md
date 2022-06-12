@@ -1,6 +1,6 @@
 # vending-machine-business
 
-FIXME: description
+This repository will run a simulation with several different vending machines in differente locations with different id's
 
 ## Installation
 
@@ -8,7 +8,7 @@ Download from http://example.com/FIXME.
 
 ## Usage
 
-FIXME: explanation
+To run the executable found in targer use the following commands
 
     $ java -jar vending-machine-business-0.1.0-standalone.jar [args]
 
