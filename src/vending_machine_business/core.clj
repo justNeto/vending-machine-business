@@ -1,6 +1,6 @@
 (ns vending-machine-business.core
-  (:require [clojure.tools.cli :refer [parse-opts]])
-  (:gen-class))
+  (:gen-class)
+)
 
 
 (defn -main
