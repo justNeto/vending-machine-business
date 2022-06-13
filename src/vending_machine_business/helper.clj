@@ -29,39 +29,47 @@
 )
 
 ;; Define paths to save the data
-(def business-data "/home/neto/Documents/Tec/4thSemester/IMC/EvidenciaTres/vending-machine-business/src/vending_machine_business/business-data")
-
-(def coin-won-path "/home/neto/Documents/Tec/4thSemester/IMC/EvidenciaTres/vending-machine-business/src/vending_machine_business/coin-won")
+(def business-path "/home/neto/Documents/Tec/4thSemester/IMC/EvidenciaTres/vending-machine-business/src/vending_machine_business/business-data")
+(def coin-path "/home/neto/Documents/Tec/4thSemester/IMC/EvidenciaTres/vending-machine-business/src/vending_machine_business/coin-won")
 
 ;; Default machines
-(def gen-default-machine
-'(("first-machine" (("coca" 15 10)("agua" 15 12)("manzanita" 7 10)) ((10 20)(5 30)(2 15)(1 20)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
-  ("second-machine" (("gansito" 18 6) ("pinguinos" 15 17) ("coca" 20 20)) ((10 20)(5 22)(2 15)(1 50)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
-  ("third-machine" (("manzanita" 20 20) ("agua" 15 20) ("chocoroles" 18 20)) ((10 20)(5 31)(2 11)(1 12)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
-  ("fourth-machine" (("fresca" 18 17) ("fritos" 15 17) ("ruffles" 15 20)) ((10 30)(5 5)(2 5)(1 31)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
-  ("fifth-machine" (("coca" 15 10)("fresca" 18 5)("manzanita" 10 23)) ((10 53)(5 20)(2 10)(1 35)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
-  ("sixth-machine" (("coca" 15 15) ("pinguinos" 15 7) ("ruffles" 15 14)) ((20 23)(10 10)(5 10)(2 40)(1 26))(("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10)))))
+(def default-machine
+  '(
+    ("first-machine" (("coca" 15 10)("agua" 15 12)("manzanita" 7 10)) ((10 20)(5 30)(2 15)(1 20)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+    ("second-machine" (("gansito" 18 6) ("pinguinos" 15 17) ("coca" 20 20)) ((10 20)(5 22)(2 15)(1 50)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+    ("third-machine" (("manzanita" 20 20) ("agua" 15 20) ("chocoroles" 18 20)) ((10 20)(5 31)(2 11)(1 12)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+    ("fourth-machine" (("fresca" 18 17) ("fritos" 15 17) ("ruffles" 15 20)) ((10 30)(5 5)(2 5)(1 31)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+    ("fifth-machine" (("coca" 15 10)("fresca" 18 5)("manzanita" 10 23)) ((10 53)(5 20)(2 10)(1 35)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+    ("sixth-machine" (("coca" 15 15) ("pinguinos" 15 7) ("ruffles" 15 14)) ((20 23)(10 10)(5 10)(2 40)(1 26))(("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+  )
 )
 
 (def coin-won ;; a unmutable data container to represent the information gain
-    '(("first-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
+  '(
+    ("first-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
     ("second-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
     ("third-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
     ("fourth-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
     ("fifth-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
-    ("sixth-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0))))
+    ("sixth-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
+  )
 )
 
-
-(defn create-coin-won
-  (write-file coin-won-path coin-won)
+(defn create-coin-won []
+  (write-file coin-path coin-won)
 )
 
-(defn create-default-machine
-  (write-file business-data gen-default-machine)
+(defn create-default-machine []
+  (write-file business-path default-machine)
 )
 
-(def read-business-data (read-file default-machine-path))
+(defn read-business-data []
+  (read-file business-path)
+)
+
+(defn read-won-coin []
+ (read-file coin-path)
+)
 
 (def max-deposit 50)
 
@@ -87,7 +95,7 @@
 
  (defn update-coin-won [index value]
   (println "Updating coin won")
-  ; (swap! coin-won (reconstruct-deposit @coin-won index value))
+  () ;; open won coin
   (println coin-won)
   ;; save coin-won in a file to be opened next time
  )

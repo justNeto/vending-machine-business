@@ -37,12 +37,14 @@
   )
 )
 
-(defn check-currency-in [transactions deposit]
-  (println "Transaction in check-currency-in: " transactions)
+(defn check-currency-in [transactions deposit inventory]
+  ; (println "Transaction in check-currency-in: " transactions)
+  (println "Transaction in check-currency-in:" (first transactions))
+  (println "Inventory in check-currency-in :" inventory)
 
   (cond
     (nil? transactions) true
-    (< (hp/get-space (first transactions) deposit) hp/max-deposit) (do (hp/update-coin-won (first transactions) 1) (hp/update-money (first transactions) 1) (check-currency-in (rest transactions) deposit))
+    (< (hp/get-space (first transactions) deposit) hp/max-deposit) (do (hp/update-coin-won (first transactions) 1 inventory deposit) (hp/update-money (first transactions) 1 inventory deposit) (check-currency-in (rest transactions) deposit inventory))
     ; (and (< (hp/get-space 1 deposit) hp/max-deposit) (= (first transactions) 1)) (do (hp/update-coin-won 1 1) (hp/update-money (first transactions) 1) (check-currency-in (rest transactions) deposit))
     ; (and (< (hp/get-space 2 deposit) hp/max-deposit) (= (first ) 2)) (do(hp/update-coin-won 2 1) (hp/update-money (first transactions) 1) (check-currency-in (rest transactions) deposit))
     ; (and (< (hp/get-space 5 deposit) hp/max-deposit) (= (first transactions) 5))  (do(hp/update-coin-won 5 1)(hp/update-money (first transactions) 1) (check-currency-in (rest transactions) deposit))
@@ -94,7 +96,7 @@
   (println)
 
   (cond
-    (and (check-currency-in (first (rest transaction)) deposit) (validate (first (rest transaction)) (first (rest inventory)) 0 deposit)) true
+    (and (check-currency-in (first (rest transaction)) deposit inventory) (validate (first (rest transaction)) (first (rest inventory)) 0 deposit)) true
     :else false
   )
 )
@@ -117,9 +119,9 @@
 
 (defn start-transactions [inventory deposit transactions]
   ;; get product in inventory and confirm it exist
-  ; (println "Inventory received: " inventory)
-  ; (println "Deposit received: " deposit)
-  ; (println "Transactions received: " transactions)
+  (println "Inventory received: " inventory)
+  (println "Deposit received: " deposit)
+  (println "Transactions received: " transactions)
 
   (cond
     (nil? transactions) true
@@ -128,7 +130,7 @@
   )
 )
 
-(defn start-transaction [inventory deposit transaction]
+(defn start-transaction [machine]
   ;; get product in inventory and confirm it exist
   (cond
     (product-exist? inventory transaction deposit) true ;; executes the transaction
@@ -141,18 +143,19 @@
   (println "Final stuff")
 )
 
-(defn pass-atom-to-automata [data] ;; this is the wrapper for the default data
-  (println data)
-  (cond
-    (nil? data) (final-stuff) ;; if data is null then no more data found
-    (= (start-transactions (first (rest (first data))) (first (rest (rest (first data)))) (first (rest (rest (rest (first data)))))) true) (println "Transaction completed");; inventory
-  )
-)
-
 (defn pass-list-to-automata [data] ;; this is the wrapper for the default data
+
+  (println "Data received:" data)
+  (println)
+
+  (println "Machine name: " (first(first data)) )
+  (println "Inventory: " (first (rest (first data))))
+  (println "Deposit: " (first (rest (rest (first data)))))
+  (println "Transaction: "(first (rest (rest (rest (first data))))))
+
   (cond
     (nil? data) (final-stuff) ;; if data is null then no more data found
-    (= (start-transactions (first (rest (first data))) (first (rest (rest (first data)))) (first (rest (rest (rest (first data)))))) true) (println "Transaction completed");; inventory
+    (= (start-transactions (first data) true) (println "Transaction completed");; inventory
   )
 )
 
@@ -163,7 +166,6 @@
 (defprotocol Format
   (fmt [this])
 )
-
 (extend-protocol Format
   clojure.lang.IPersistentList
     (fmt [this] (str "list"))
@@ -174,6 +176,7 @@
 )
 
 (defn run-machines [file]
+  (println "Reaching this function")
   (cond
     (= (fmt file) "list") (pass-list-to-automata file)
     (= (fmt file) "file") (pass-file-to-automata file)
@@ -185,11 +188,19 @@
 ;; -h / -v mutually exclusive
 ;; -m has to be run with -t
 
+(defn wrapper-for-sim []
+  (println "::- [ Business not specified. Creating default business ]")
+  (hp/create-default-machine)
+  (hp/create-coin-won)
+  (run-machines (hp/read-business-data))
+)
+
+
 (defn validate-args [args]
-  ; (println args) ;; access args data with first
+  (println args) ;; access args data with first
   (cond
     (or (= (first args) "-f") (= (first args) "--file")) (run-machines (rest args))
-    (or (= (first args) "-s") (= (first args) "--simulation")) (do (hp/create-default-machine) (run-machines hp/read-business-data))
+    (or (= (first args) "-s") (= (first args) "--simulation")) (wrapper-for-sim)
     :else (println "Error. Ending the program.")
   )
 )
