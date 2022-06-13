@@ -1,4 +1,5 @@
 (ns vending-machine-business.helper)
+(use 'clojure.java.io)
 
 (defn usage []
   (println "Usage: vending-business [OPTIONS] ... [FILE] ...")
@@ -17,209 +18,191 @@
   (println "-v, --version                   displays current version of script.\n")
 )
 
-(def default-machine
-  '(
-    ("first-machine" (("coca" 15 10)("agua" 15 12)("manzanita" 7 10)) ("a") ("a") )
-    ("second-machine" (("gansito" 18 6) ("pinguinos" 15 17) ("coca" 20 20)) ("b") ("b") )
-    ("third-machine" (("manzanita" 20 20) ("agua" 15 20) ("chocoroles" 18 20)) ("c") ("c") )
-    ("fourth-machine" (("fresca" 18 17) ("fritos" 15 17) ("ruffles" 15 20)) ("d") ("d") )
-    ("fifth-machine" (("coca" 15 10)("fresca" 18 5)("manzanita" 10 23)) ("e") ("e") )
-    ("sixth-machine" (("coca" 15 15) ("pinguinos" 15 7) ("ruffles" 15 14)) ("f") ("f") )
+(defn write-file [file-path data]
+  (spit file-path
+        (pr-str data)
   )
 )
 
-(def coin-won
-  '((50 0)(20 0)(10 0)(5 0)(2 0)(1 0))
+(defn read-file [file-path]
+  (read-string (slurp file-path))
 )
 
-(def max-deposit ;; max amount of space for a coin of any denomination
-  50
+;; Define paths to save the data
+(def business-data "/home/neto/Documents/Tec/4thSemester/IMC/EvidenciaTres/vending-machine-business/src/vending_machine_business/business-data")
+
+(def coin-won-path "/home/neto/Documents/Tec/4thSemester/IMC/EvidenciaTres/vending-machine-business/src/vending_machine_business/coin-won")
+
+;; Default machines
+(def gen-default-machine
+'(("first-machine" (("coca" 15 10)("agua" 15 12)("manzanita" 7 10)) ((10 20)(5 30)(2 15)(1 20)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+  ("second-machine" (("gansito" 18 6) ("pinguinos" 15 17) ("coca" 20 20)) ((10 20)(5 22)(2 15)(1 50)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+  ("third-machine" (("manzanita" 20 20) ("agua" 15 20) ("chocoroles" 18 20)) ((10 20)(5 31)(2 11)(1 12)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+  ("fourth-machine" (("fresca" 18 17) ("fritos" 15 17) ("ruffles" 15 20)) ((10 30)(5 5)(2 5)(1 31)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+  ("fifth-machine" (("coca" 15 10)("fresca" 18 5)("manzanita" 10 23)) ((10 53)(5 20)(2 10)(1 35)) (("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10))))
+  ("sixth-machine" (("coca" 15 15) ("pinguinos" 15 7) ("ruffles" 15 14)) ((20 23)(10 10)(5 10)(2 40)(1 26))(("coca" (1 1 1 5 10))("chocoroles" (1 1 1 5 10))("agua" (1 1 1 5 10)))))
 )
 
-;;;
-;;; helper.rkt defines the initial data for the simulation of the machine and helper functions to be used through the rest of the program
-;;;
-
-
-(defn update-coin-won [index value]
-;  ; (set! coin-won (reconstruct-deposit coin-won index value))
+(def coin-won ;; a unmutable data container to represent the information gain
+    '(("first-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
+    ("second-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
+    ("third-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
+    ("fourth-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
+    ("fifth-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
+    ("sixth-machine"((50 0)(20 0)(10 0)(5 0)(2 0)(1 0))))
 )
 
-;(defn reset-coin-won
-;  ; (set! coin-won '((50 0)(20 0)(10 0)(5 0)(2 0)(1 0)))
-;)
 
-;(defn update-money [index value]
-;  ; (set! deposit (reconstruct-deposit deposit index value))
-;)
+(defn create-coin-won
+  (write-file coin-won-path coin-won)
+)
 
-;(defn update-inventory [index value]
-;  ; (set! inventory (reconstruct-inventory inventory index value))
-;)
+(defn create-default-machine
+  (write-file business-data gen-default-machine)
+)
 
-;(defn reconstruct-deposit [datos index value]
-;    (cond
-;     (nil? datos) '()
-;     (= index (first (first datos))) (append (list (list (first (first datos)) (+ (first (rest (first datos))) value))) (rest datos))
-;     :else (append (list (first datos)) (reconstruct-deposit (rest datos) index value))
-;    )
-;)
+(def read-business-data (read-file default-machine-path))
 
-;(defn reconstruct-inventory [datos index value]
-;      (cond
-;       (nil? datos) '()
-;       (= index (first (first datos))) (append (list (list (first (first datos)) (first (rest (first datos))) (+ (first (rest (rest (first datos)))) value))) (rest datos))
-;       :else (append (list (first datos)) (reconstruct-inventory (rest datos) index value))
-;      )
-;  )
+(def max-deposit 50)
 
-;(defn destroy-product-list []
-;  ; (delete-file (build-path (current-directory) "db" "product-list"))
-;)
+;;
+;; helper.rkt defines the initial data for the simulation of the machine and helper functions to be used through the rest of the program
+;;
 
-;(defn destroy-money-deposit []
-;  ; (delete-file (build-path (current-directory) "db" "money-deposit"))
-;)
+(defn reconstruct-deposit [datos index value]
+    (cond
+     (nil? datos) '()
+     (= index (first (first datos))) (concat (list (list (first (first datos)) (+ (first (rest (first datos))) value))) (rest datos))
+     :else (concat (list (first datos)) (reconstruct-deposit (rest datos) index value))
+    )
+)
 
-;(defn destroy-transaction-file []
-;  ; (delete-file (build-path (current-directory) "db" "test-transaction"))
-;)
+(defn reconstruct-inventory [datos index value]
+      (cond
+       (nil? datos) '()
+       (= index (first (first datos))) (concat (list (list (first (first datos)) (first (rest (first datos))) (+ (first (rest (rest (first datos)))) value))) (rest datos))
+       :else (concat (list (first datos)) (reconstruct-inventory (rest @datos) index value))
+      )
+)
 
-;(defn destroy-transactions-file []
-;  ; (delete-file (build-path (current-directory) "db" "test-transactions"))
-;)
+ (defn update-coin-won [index value]
+  (println "Updating coin won")
+  ; (swap! coin-won (reconstruct-deposit @coin-won index value))
+  (println coin-won)
+  ;; save coin-won in a file to be opened next time
+ )
 
-;;; Set and get data to use in the main code:
-;;; Make copies of the inventory and deposit
-;;; Update stuff
-;;; Retrieve data is needed
+(defn update-money [index value inventory]
+  ; (set! deposit (reconstruct-deposit deposit index value))
+  (println "Setting deposit")
+)
 
-;(defn bubble [lts] ;; bubble sort for change automata
-;  (if (nil? (rest lts))
-;      lts
-;      (if (> (first (first lts)) (first (cadr lts)))
-;          (cons (first lts)
-;                (bubble (rest lts)))
-;          (cons (cadr lts)
-;                (bubble (cons (first lts) (rest (rest lts)))))
-;      )
-;  )
-;)
+(defn update-inventory [index value inventory]
+  ; (set! inventory (reconstruct-inventory inventory index value))
+  (println "Updating inventory")
+)
 
-;(defn bubble-sort [N lts]
-;  (cond
-;        (= N 1) (bubble lts)
-;        :else (bubble-sort (- N 1) (bubble lts))
-;  )
-;)
 
-;(defn set-bubble [lts]
-;  (bubble-sort (length lts) lts)
-;)
+;; Set and get data to use in the main code:
+;; Make copies of the inventory and deposit
+;; Update stuff
+;; Retrieve data is needed
 
-;;; Check data from the money deposit
-;(defn get-space [index]
-;  (get-coin index deposit)
-;)
+(defn bubble [lts] ;; bubble sort for change automata
+  (if (nil? (rest lts))
+      lts
+      (if (> (first (first lts)) (first (first (rest lts))))
+          (cons (first lts)
+                (bubble (rest lts)))
+          (cons (first (rest lts))
+                (bubble (cons (first lts) (rest (rest lts)))))
+      )
+  )
+)
 
-;(defn get-coin [index coin-list]
-;  (cond
-;    (= index (first (first coin-list))) (first (rest (first coin-list)))
-;    :else (get-coin index (rest coin-list))
-;  )
-;)
+(defn bubble-sort [N lts]
+  (cond
+        (= N 1) (bubble lts)
+        :else (bubble-sort (- N 1) (bubble lts))
+  )
+)
 
-;;; Check data from the inventory
-;(defn get-available [index]
-;  (get-product index inventory)
-;)
+(defn set-bubble [lts]
+  (bubble-sort (.length lts) lts)
+)
 
-;(defn get-product [index inv]
-;  (cond
-;    (= index (first (first inv))) (first (rest (rest (first inv))))
-;    :else (get-product index (rest inv))
-;  )
-;)
+;; Check data from the money deposit
+(defn get-coin [index coin-list]
+  (cond
+    (= index (first (first coin-list))) (first (rest (first coin-list)))
+    :else (get-coin index (rest coin-list))
+  )
+)
 
-;;; Print inventory info. If get-available < 10 then is almost empty
-;(defn almost-empty-inventory [inv]
-;  (cond
-;    [(nil? inv) #t]
-;    [(< (get-available (first (first inv))) 10) (println (first (first inv))) (println " is almost empty or empty") (almost-empty-inventory (rest inv)) ] ;; if almost full
-;  )
-;)
+(defn get-space [index deposit]
+  (get-coin index deposit)
+)
 
-;;; Print deposit info. If get-space is less than 10, then almos empty. If bigger than 50, empty
-;(defn almost-full-coin []
-;  (cond
-;    (> (get-space 1) (- max-deposit 10)) (println "The deposit for coins of 1 is almost full or full, with: ") (println (get-space 1))  ;; if almost full
-;  )
-;  (cond
-;    (> (get-space 2) (- max-deposit 10)) (println "The deposit for coins of 2 is almost full or full, with: ") (println (get-space 2)) ;; if almost full
-;  )
-;  (cond
-;    [(> (get-space 5) (- max-deposit 10)) (println "The deposit for coins of 5 is almost full or full, with: ") (println (get-space 5)) ] ;; if almost full
-;  )
-;  (cond
-;    [(> (get-space 10) (- max-deposit 10)) (println "The deposit for coins of 10 is almost full or full, with: ") (println (get-space 10)) ] ;; if almost full
-;  )
-;  (cond
-;    [(> (get-space 20) (- max-deposit 10)) (println "The deposit for coins of 20 is almost full or full, with: ") (println (get-space 20)) ] ;; if almost full
-;  )
-;  (cond
-;    [(> (get-space 50) (- max-deposit 10)) (println "The deposit for coins of 50 is almost full or full, with: ") (println (get-space 50)) ] ;; if almost full
-;  )
-;)
 
-;(defn almost-empty-coin []
-;  (cond
-;    (< (get-space 1) 10) (println "The deposit for coins of 1 is almost empty or empty, with: ") (println (get-space 1))  ;; if almost empty
-;  )
-;  (cond
-;    (< (get-space 2) 10) (println "The deposit for coins of 2 is almost empty or empty, with: ") (println (get-space 2))  ;; if almost empty
-;  )
-;  (cond
-;    (< (get-space 5) 10) (println "The deposit for coins of 5 is almost empty or empty, with: ") (println (get-space 5))  ;; if almost empty
-;  )
-;  (cond
-;    (< (get-space 10) 10) (println "The deposit for coins of 10 is almost empty or empty, with: ") (println (get-space 10))  ;; if almost empty
-;  )
-;  (cond
-;    (< (get-space 20) 10) (println "The deposit for coins of 20 is almost empty or empty, with: ") (println (get-space 20))  ;; if almost empty
-;  )
-;  (cond
-;    (< (get-space 50) 10) (println "The deposit for coins of 50 is almost empty or empty, with: ") (println (get-space 50))  ;; if almost empty
-;  )
-;)
+;; Check data from the inventory
+(defn get-product [index inv]
+  (cond
+    (= index (first (first inv))) (first (rest (rest (first inv))))
+    :else (get-product index (rest inv))
+  )
+)
 
-;;; Execution of setup: creates inventory
-;(println "::- [ Set up initial data ] -::")
+(defn get-available [index inventory]
+  (get-product index inventory)
+)
 
-;(cond
-;  [(= del-data #t) (println "::- [ DELETING VENDING MACHINE DATA ]") (exit)]
-;  [(= set-simulation #t) (set-default-inventory) (set-default-deposit) (set-default-transaction) (set-default-transactions)]
-;  [(= set-simulation #f) (println "::- [ Simulation not set. Using custom user data ]" )
-
+; ;; Print inventory info. If get-available < 10 then is almost empty
+; (defn almost-empty-inventory [inv]
 ;   (cond
-;     [(= inv-set #t) (get-inventory(set-inventory))]
-;     [:else (println "::- [ Inventory not set. Ending program ]") (exit)]
+;     (nil? inv) true
+;     (< (get-available (first (first inv))) 10) (println (first (first inv))) (println " is almost empty or empty") (almost-empty-inventory (rest inv)) ;; if almost full
 ;   )
+; )
 
-
+; ;; Print deposit info. If get-space is less than 10, then almos empty. If bigger than 50, empty
+; (defn almost-full-coin []
 ;   (cond
-;     [(= dep-set #t) (get-deposit(set-deposit))]
-;     [:else (println "::- [ Deposit not set. Ending program ]") (exit) ]
+;     (> (get-space 1) (- max-deposit 10)) (println "The deposit for coins of 1 is almost full or full, with: ") (println (get-space 1))  ;; if almost full
 ;   )
-
-
 ;   (cond
-;     [(and (= trns-set #t) (= trn-set #t)) (get-transaction(set-transaction)) (get-transactions(set-transactions)) (println "::- [ Using both transaction and transactions ]")]
-;     [(and (= trns-set #t) (= trn-set #f)) (get-transactions(set-transactions)) (println "::- [ Using only default transactions ]")]
-;     [(and (= trns-set #f) (= trn-set #t)) (get-transaction(set-transaction)) (println "::- [ Using only default transaction ]")]
-;     [:else (println "::- [ Neither transaction nor transactions set. Ending program ]") (exit)]
+;     (> (get-space 2) (- max-deposit 10)) (println "The deposit for coins of 2 is almost full or full, with: ") (println (get-space 2)) ;; if almost full
 ;   )
-;  ] ;; expecting data
+;   (cond
+;     [(> (get-space 5) (- max-deposit 10)) (println "The deposit for coins of 5 is almost full or full, with: ") (println (get-space 5)) ] ;; if almost full
+;   )
+;   (cond
+;     [(> (get-space 10) (- max-deposit 10)) (println "The deposit for coins of 10 is almost full or full, with: ") (println (get-space 10)) ] ;; if almost full
+;   )
+;   (cond
+;     [(> (get-space 20) (- max-deposit 10)) (println "The deposit for coins of 20 is almost full or full, with: ") (println (get-space 20)) ] ;; if almost full
+;   )
+;   (cond
+;     [(> (get-space 50) (- max-deposit 10)) (println "The deposit for coins of 50 is almost full or full, with: ") (println (get-space 50)) ] ;; if almost full
+;   )
+; )
 
-;)
-
-; (println "::- [ End setting up data ] -::")
+; (defn almost-empty-coin []
+;   (cond
+;     (< (get-space 1) 10) (println "The deposit for coins of 1 is almost empty or empty, with: ") (println (get-space 1))  ;; if almost empty
+;   )
+;   (cond
+;     (< (get-space 2) 10) (println "The deposit for coins of 2 is almost empty or empty, with: ") (println (get-space 2))  ;; if almost empty
+;   )
+;   (cond
+;     (< (get-space 5) 10) (println "The deposit for coins of 5 is almost empty or empty, with: ") (println (get-space 5))  ;; if almost empty
+;   )
+;   (cond
+;     (< (get-space 10) 10) (println "The deposit for coins of 10 is almost empty or empty, with: ") (println (get-space 10))  ;; if almost empty
+;   )
+;   (cond
+;     (< (get-space 20) 10) (println "The deposit for coins of 20 is almost empty or empty, with: ") (println (get-space 20))  ;; if almost empty
+;   )
+;   (cond
+;     (< (get-space 50) 10) (println "The deposit for coins of 50 is almost empty or empty, with: ") (println (get-space 50))  ;; if almost empty
+;   )
+; )
